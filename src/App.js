@@ -1,26 +1,27 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import {connect} from 'react-redux'
 
-function App() {
+function App(props) {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <h3> Value is {props.year} </h3>
+        <button onClick={props.increaseYear}> increase </button>
+        <button onClick={props.decreaseYear}> decrease </button>
     </div>
   );
 }
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    year: state.year
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    increaseYear: () => dispatch({type:'INCREASE'}),
+    decreaseYear: () => dispatch({type:'DECREASE'})
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(App);

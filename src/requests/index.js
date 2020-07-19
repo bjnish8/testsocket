@@ -4,11 +4,11 @@ class Users{
     getYear = () => {
         return axios.get('http://127.0.0.1:8000/')
     }
-    updateYear = () => {
+    updateYear = (year) => {
         console.log("Updaing user from API")
         return axios.post('http://127.0.0.1:8000/update',
         {
-            year: 2033
+            year: year
         }
         )
     }

@@ -10,7 +10,7 @@ function App(props) {
       props.setYear(res.data.year)
     })
     .catch(err => console.log("Error: ", err))
-  })
+  }, [])
   const increaseYear = () => {
     userAPI.updateYear(props.year+1)
     .then(res => console.log(res.data))

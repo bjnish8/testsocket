@@ -1,11 +1,13 @@
 const express = require('express');
 const app = express()
 const port = 8000
+const http = require('http')
 const Pool = require('pg').Pool
 const cors = require('cors')
 var bodyParser = require('body-parser')
 var multer  = require('multer')
 var upload = multer()
+const socketIo = require("socket.io");
 
 const pool = new Pool({
     user: 'postgres',
@@ -60,4 +62,31 @@ app.post('/update', upload.none(), function (req, res, next) {
     .then(result => res.status(200).send({'message': 'Succesfully updated'}))
   })
 
-app.listen(port, () => console.log(`Example app listening at http://127.0.0.1:${port}`))
+const server = http.createServer(app)
+
+const io = socketIo(server)
+
+let interval;
+
+io.on("connection", (socket) => {
+  console.log("New client connected");
+  if (interval) {
+    clearInterval(interval);
+  }
+  interval = setInterval(() => getApiAndEmit(socket), 1000);
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+    clearInterval(interval);
+  });
+});
+
+const getApiAndEmit = socket => {
+  let result
+  getYear()
+  .then(response => {
+      return response.rows[0].year
+  })
+  .then(data =>  socket.emit("FromAPI", data))
+};
+
+server.listen(port, () => console.log(`Example app listening at http://127.0.0.1:${port}`))

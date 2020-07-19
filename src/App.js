@@ -1,9 +1,13 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import './App.css';
 import {connect} from 'react-redux'
 import userAPI from './requests/index'
+import socketIOClient from 'socket.io-client'
 
 function App(props) {
+  const [response, setResponse] = useState("");
+
+  
   useEffect(() => {
     userAPI.getYear()
     .then(res => {
@@ -11,6 +15,13 @@ function App(props) {
     })
     .catch(err => console.log("Error: ", err))
   }, [])
+  useEffect(() => {
+    const socket = socketIOClient('http://127.0.0.1:8000');
+    socket.on("FromAPI", data => {
+      console.log("socket response ", data)
+      setResponse(data);
+    });
+  }, []);
   const increaseYear = () => {
     userAPI.updateYear(props.year+1)
     .then(res => console.log(res.data))
@@ -25,9 +36,12 @@ function App(props) {
   }
   return (
     <div className="App">
-        <h3> Value is {props.year} </h3>
+            <p>
+      It's {response}
+    </p>
         <button onClick={increaseYear}> increase </button>
         <button onClick={decreaseYear}> decrease </button>
+  
     </div>
   );
 }

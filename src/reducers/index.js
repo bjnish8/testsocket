@@ -13,6 +13,8 @@ const BaseReducer = (state=initialState, action) => {
             return updateObj(state, {year: state.year+1})
         case 'DECREASE':
             return updateObj(state, {year: state.year-1})
+        case 'SET':
+            return updateObj(state, {year: action.payload})
         default:
             return state
     }
